@@ -1,6 +1,6 @@
 #include "set.h"
 #include "item.h"
-#include "ab.h"
+#include "avl.h"
 #include "lista.h"
 
 #include <stdio.h>
@@ -21,9 +21,9 @@ SET *set_criar(int tipo) {
         set->tipo = tipo;
 
         if (tipo == ED_LISTA) {
-            set->ed = lista_criar(false); //lista não ordenada
+            set->ed = lista_criar(true); //lista ordenada
         } else {
-            set->ed = ab_criar();
+            set->ed = avl_criar();
         }
     }
     return(set);
@@ -37,7 +37,7 @@ void set_apagar(SET **set) {
     if ((*set)->tipo == ED_LISTA) {
         lista_apagar((LISTA**) &(*set)->ed);
     } else {
-        ab_apagar((AB**) &(*set)->ed);
+        avl_apagar((AVL**) &(*set)->ed);
     }
 
     free(*set);
@@ -59,6 +59,6 @@ void set_imprimir(SET *set) {
     if (set->tipo == ED_LISTA) {
         lista_imprimir((LISTA*) set->ed);
     } else {
-        ab_imprimir((AB*) set->ed);
+        avl_imprimir((AVL*) set->ed);
     }
 }
