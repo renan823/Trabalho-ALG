@@ -3,7 +3,7 @@
 
     #include "item.h"
     #include "avl.h"
-    #include "lista.h"
+    #include "arb.h"
 
     #include <stdbool.h>
 

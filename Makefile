@@ -1,11 +1,11 @@
-all: item.o lista.o avl.o set.o main.o
-	gcc -std=c99 -Wall item.o lista.o avl.o set.o main.o -o sets
+all: item.o arb.o avl.o set.o main.o
+	gcc -std=c99 -Wall item.o arb.o avl.o set.o main.o -o sets
 
 item.o:
 	gcc -c item.c 
 
-lista.o:
-	gcc -c lista.c 
+arb.o:
+	gcc -c arb.c 
 
 avl.o:
 	gcc -c avl.c 

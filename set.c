@@ -1,13 +1,13 @@
 #include "set.h"
 #include "item.h"
 #include "avl.h"
-#include "lista.h"
+#include "arb.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define ED_LISTA 0 //quando usar lista/arvore
+#define ED_AVL 0 //quando usar avl/rubro-negra
 
 struct _set {
     int tipo;
@@ -20,10 +20,10 @@ SET *set_criar(int tipo) {
     if (set != NULL) {
         set->tipo = tipo;
 
-        if (tipo == ED_LISTA) {
-            set->ed = lista_criar(true); //lista ordenada
+        if (tipo == ED_AVL) {
+            set->ed = avl_criar(); 
         } else {
-            set->ed = avl_criar();
+            set->ed = arb_criar();
         }
     }
     return(set);
@@ -34,10 +34,10 @@ void set_apagar(SET **set) {
         return;
     }
 
-    if ((*set)->tipo == ED_LISTA) {
-        lista_apagar((LISTA**) &(*set)->ed);
-    } else {
+    if ((*set)->tipo == ED_AVL) {
         avl_apagar((AVL**) &(*set)->ed);
+    } else {
+        arb_apagar((ARB**) &(*set)->ed);
     }
 
     free(*set);
@@ -56,9 +56,9 @@ void set_imprimir(SET *set) {
         return;
     }
 
-    if (set->tipo == ED_LISTA) {
-        lista_imprimir((LISTA*) set->ed);
-    } else {
+    if (set->tipo == ED_AVL) {
         avl_imprimir((AVL*) set->ed);
+    } else {
+        arb_imprimir((ARB*) set->ed);
     }
 }

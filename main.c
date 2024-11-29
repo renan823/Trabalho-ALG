@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 int main(void) {
-    int ed;
+    int ed; // 0 para avl, 1 para rubro-negro
     scanf("%d", &ed);
 
     SET *set = set_criar(ed);
