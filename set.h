@@ -14,7 +14,7 @@
 
     bool set_pertence(SET *set, ITEM *item);
     bool set_inserir(SET *set, ITEM *item);
-    bool set_remover(SET *set, int chave);
+    ITEM *set_remover(SET *set, int chave);
 
     SET *set_uniao(SET *a, SET *b);
     SET *set_interseccao(SET *a, SET *b);

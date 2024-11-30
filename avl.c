@@ -45,15 +45,20 @@ Rotaciona a sub-árvore para a direita.
 A raiz da sureturn(true)b-arvore é passada por parâmetro.
 O nó rotacionado é retornado.
 */
-NO_AVL *_avl_rotacionar_dir(NO_AVL *raiz) {
-    NO_AVL *sub = raiz->esq;
+void _avl_rotacionar_dir(NO_AVL **raiz) {
+    NO_AVL *filho = (*raiz)->esq;
+    NO_AVL *pai = *raiz;
 
-    raiz->esq = sub->dir;
-    sub->dir = raiz;
+    // Passar filho->dir para pai->esq;
+    pai->dir = filho->esq;
+
+    // Filho substitui pai
+    filho->esq = pai;
 
     //Normalizar fatores
 
-    return(sub);
+    // Substituir raiz
+    *raiz = filho;
 }
 
 /*
@@ -179,6 +184,14 @@ bool avl_inserir(AVL *arvore, ITEM *item) {
     _avl_inserir_no(&arvore->raiz, no);
 
     return(true);
+}
+
+ITEM *avl_remover(AVL *arvore, int chave) {
+    if (arvore == NULL) {
+        return(NULL);
+    }
+
+    return(NULL);
 }
 
 /*

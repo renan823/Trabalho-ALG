@@ -7,6 +7,12 @@ int main(void) {
     scanf("%d", &ed);
 
     SET *set = set_criar(ed);
+
+    set_inserir(set, item_criar(1, NULL));
+    set_inserir(set, item_criar(3, NULL));
+    set_inserir(set, item_criar(4, NULL));
+    set_inserir(set, item_criar(2, NULL));
+
     set_imprimir(set);
 
     set_apagar(&set);

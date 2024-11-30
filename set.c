@@ -45,8 +45,30 @@ void set_apagar(SET **set) {
 } 
 
 bool set_pertence(SET *set, ITEM *item);
-bool set_inserir(SET *set, ITEM *item);
-bool set_remover(SET *set, int chave);
+
+bool set_inserir(SET *set, ITEM *item) {
+    if (set == NULL) {
+        return(false);
+    }
+
+    if (set->tipo == ED_AVL) {
+        return(avl_inserir((AVL*) set->ed, item));
+    } else {
+        return(arb_inserir((ARB*) set->ed, item));
+    }
+}
+
+ITEM *set_remover(SET *set, int chave) {
+    if (set == NULL) {
+        return(false);
+    }
+
+    if (set->tipo == ED_AVL) {
+        return(avl_remover((AVL*) set->ed, chave));
+    } else {
+        return(arb_remover((ARB*) set->ed, chave));
+    }
+}
 
 SET *set_uniao(SET *a, SET *b);
 SET *set_interseccao(SET *a, SET *b);
