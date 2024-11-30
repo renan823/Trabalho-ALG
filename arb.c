@@ -169,7 +169,7 @@ Nada é retornado.
 void _arb_trocar_maximo_esq(NO_ARB **raiz, NO_ARB **filho) {
     // Acha o maior filho direito
     if ((*filho)->dir != NULL) {
-        _arb_maximo_esq(raiz, (*filho)->dir);
+        _arb_trocar_maximo_esq(raiz, &(*filho)->dir);
     }
 
     // Troca o maior filho com a raiz
@@ -322,8 +322,25 @@ ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
             _arb_inverter_cor(raiz);
         }
 
-        return(item);
+        return(valor);
     }
+}
+
+/*
+Copia todos os nós de uma arvore para outra.
+A nova árvore e a raiz da arvore a ser 
+copiada são parâmetros.
+Primeiro insere o item na raiz, depois esq e dir.
+Nada é retornado.
+*/
+void _arb_copiar_no(ARB **copia, NO_ARB *raiz) {
+    if (*copia == NULL || raiz == NULL) {
+        return;
+    }
+
+    _arb_inserir_no(&(*copia)->raiz, _arb_criar_no(raiz->item));
+    _arb_copiar_no(copia, raiz->esq);
+    _arb_copiar_no(copia, raiz->dir);
 }
 
 // Interface ----------------------------------
@@ -416,7 +433,33 @@ ITEM *arb_remover(ARB *arvore, int chave) {
         return(NULL);
     }
 
-    return(_arb_remover_no(&arvore->raiz, int chave));
+    return(_arb_remover_no(&arvore->raiz, chave));
+}
+
+/*
+*/
+ARB *arb_unir(ARB *a1, ARB *a2) {
+    if (a1 == NULL || a2 == NULL) {
+        return(NULL);
+    }
+
+    ARB *arvore = arb_criar();
+    _arb_copiar_no(&arvore, a1->raiz);
+    _arb_copiar_no(&arvore, a2->raiz);
+
+    return(arvore);
+}
+
+/*
+*/
+ARB *arb_intersectar(ARB *a1, ARB *a2) {
+    if (a1 == NULL || a2 == NULL) {
+        return(NULL);
+    }
+
+    ARB *arvore = arb_criar();
+
+    return(arvore);
 }
 
 /*
@@ -428,6 +471,10 @@ Nada é retornado.
 void arb_imprimir(ARB *arvore) {
     if (arvore == NULL) {
         return;
+    }
+
+    if (arvore->raiz == NULL) {
+        printf("Vazia!\n");
     }
 
     _arb_percurso_ordem(arvore->raiz);

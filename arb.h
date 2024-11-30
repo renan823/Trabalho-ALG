@@ -15,6 +15,7 @@
     ITEM *arb_buscar(ARB *arvore, int chave);
 
     ARB *arb_unir(ARB *a1, ARB *a2);
+    ARB *arb_intersectar(ARB *a1, ARB *a2);
 
     void arb_imprimir(ARB *arvore);
 #endif 

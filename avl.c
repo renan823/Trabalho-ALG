@@ -182,6 +182,23 @@ void _avl_imprimir_em_ordem(NO_AVL *raiz) {
     _avl_imprimir_em_ordem(raiz->dir);
 }
 
+/*
+Copia todos os nós de uma arvore para outra.
+A nova árvore e a raiz da arvore a ser 
+copiada são parâmetros.
+Primeiro insere o item na raiz, depois esq e dir.
+Nada é retornado.
+*/
+void _avl_copiar_no(AVL **copia, NO_AVL *raiz) {
+    if (*copia == NULL || raiz == NULL) {
+        return;
+    }
+
+    _avl_inserir_no(&(*copia)->raiz, _avl_criar_no(raiz->item));
+    _avl_copiar_no(copia, raiz->esq);
+    _avl_copiar_no(copia, raiz->dir);
+}
+
 // Interface ----------------------------------
 
 /*
@@ -239,17 +256,52 @@ bool avl_inserir(AVL *arvore, ITEM *item) {
 
     _avl_inserir_no(&arvore->raiz, no);
 
-    printf("Feito\n");
-
     return(true);
 }
 
+/*
+*/
 ITEM *avl_remover(AVL *arvore, int chave) {
     if (arvore == NULL) {
         return(NULL);
     }
 
     return(NULL);
+}
+
+ITEM *avl_buscar(AVL *arvore, int chave) {
+    if (arvore == NULL) {
+        return(NULL);
+    }
+
+    return(NULL);
+}
+
+/*
+*/
+AVL *avl_unir(AVL *a1, AVL *a2) {
+    if (a1 == NULL || a2 == NULL) {
+        return(NULL);
+    }
+
+    AVL *arvore = avl_criar();
+    _avl_copiar_no(&arvore, a1->raiz);
+    _avl_copiar_no(&arvore, a2->raiz);
+
+    return(arvore);
+}
+
+/*
+*/
+AVL *avl_intersectar(AVL *a1, AVL *a2) {
+    if (a1 == NULL || a2 == NULL) {
+        return(NULL);
+    }
+
+    AVL *arvore = avl_criar();
+   
+
+    return(arvore);
 }
 
 /*
@@ -261,6 +313,10 @@ Nada é retornado.
 void avl_imprimir(AVL *arvore) {
     if (arvore == NULL) {
         return;
+    }
+
+    if (arvore->raiz == NULL) {
+        printf("Vazia!\n");
     }
 
     _avl_imprimir_em_ordem(arvore->raiz);

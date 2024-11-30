@@ -82,16 +82,38 @@ ITEM *set_remover(SET *set, int chave) {
 }
 
 SET *set_uniao(SET *a, SET *b) {
-    if (a == NULL || b == NULL) {
+    if ((a == NULL || b == NULL) || (a->tipo != b->tipo)) {
         return(NULL);
     }
+
+    // Inicializa novo set
+    SET *set = set_criar(a->tipo);
+
+    if (a->tipo == ED_AVL) {
+        set->ed = avl_unir((AVL*) a->ed, (AVL*) b->ed);
+    } else {
+        set->ed = arb_unir((ARB*) a->ed, (ARB*) b->ed);
+    }
+
+    return(set);
 }
 
 
 SET *set_interseccao(SET *a, SET *b) {
-    if (a == NULL || b == NULL) {
+    if ((a == NULL || b == NULL) || (a->tipo != b->tipo)) {
         return(NULL);
     }
+
+    // Inicializa novo set
+    SET *set = set_criar(a->tipo);
+
+    if (a->tipo == ED_AVL) {
+        set->ed = avl_intersectar((AVL*) a->ed, (AVL*) b->ed);
+    } else {
+        set->ed = arb_intersectar((ARB*) a->ed, (ARB*) b->ed);
+    }
+
+    return(set);
 }
 
 void set_imprimir(SET *set) {

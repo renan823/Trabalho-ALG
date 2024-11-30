@@ -15,6 +15,7 @@
     ITEM *avl_buscar(AVL *arvore, int chave);
 
     AVL *avl_unir(AVL *a1, AVL *a2);
+    AVL *avl_intersectar(AVL *a1, AVL *a2);
 
     void avl_imprimir(AVL *arvore);
 #endif 
