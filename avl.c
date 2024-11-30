@@ -47,17 +47,33 @@ O nó rotacionado é retornado.
 */
 void _avl_rotacionar_dir(NO_AVL **raiz) {
     NO_AVL *filho = (*raiz)->esq;
-    NO_AVL *pai = *raiz;
-
     // Passar filho->dir para pai->esq;
-    pai->dir = filho->esq;
+    (*raiz)->esq = filho->dir;
 
     // Filho substitui pai
-    filho->esq = pai;
+    filho->dir = (*raiz);
 
     //Normalizar fatores
+    (*raiz)->fator = _avl_altura_no((*raiz)->esq) - _avl_altura_no((*raiz)->dir);
+    filho->fator = _avl_altura_no(filho->esq) - _avl_altura_no(filho->dir);
 
     // Substituir raiz
+    *raiz = filho;
+}
+
+void _avl_rotacionar_esq(NO_AVL **raiz) {
+    NO_AVL *filho = (*raiz)->dir;
+
+    // Passar filho->esq para pai->dir;
+    (*raiz)->dir = filho->esq;
+
+    // Filho substitui pai
+    filho->esq = *raiz;
+
+    //Normalizar fatores
+    (*raiz)->fator = _avl_altura_no((*raiz)->esq) - _avl_altura_no((*raiz)->dir);
+    filho->fator = _avl_altura_no(filho->esq) - _avl_altura_no(filho->dir);
+
     *raiz = filho;
 }
 
@@ -102,12 +118,50 @@ void _avl_apagar_no(NO_AVL *raiz) {
 }
 
 void _avl_inserir_no(NO_AVL **raiz, NO_AVL *no) {
+    // Caso 1 - Raiz nula
     if (*raiz == NULL) {
         *raiz = no;
         return;
     }
 
+    if (item_get_chave((*raiz)->item) > item_get_chave(no->item)) {
+        _avl_inserir_no(&(*raiz)->esq, no);
+    }
 
+    if (item_get_chave((*raiz)->item) < item_get_chave(no->item)) {
+        _avl_inserir_no(&(*raiz)->dir, no);
+    }
+
+    if (item_get_chave((*raiz)->item) == item_get_chave(no->item)) {
+        return;
+    }
+
+    // Normalizar fator
+    (*raiz)->fator = _avl_altura_no((*raiz)->esq) - _avl_altura_no((*raiz)->dir);
+
+    // Inseriu na direita
+    if ((*raiz)->fator == -2) {
+        if ((*raiz)->dir->fator <= 0) {
+            // Sinais iguais - Rot. Simples. Esq
+            _avl_rotacionar_esq(raiz);
+        } else {
+            // Sinais diferentes - Rot. Dupla. Dir/Esq
+            _avl_rotacionar_dir(&(*raiz)->dir);
+            _avl_rotacionar_esq(raiz);
+        }   
+    }
+
+    // Inseriu na esquerda
+    if ((*raiz)->fator == 2) {
+        if ((*raiz)->esq->fator >= 0) {
+            // Sinais iguais - Rot. Simples. Dir
+            _avl_rotacionar_dir(raiz);
+        } else {
+            // Sinais diferentes - Rot. Dupla. Esq/Dir
+            _avl_rotacionar_esq(&(*raiz)->esq);
+            _avl_rotacionar_dir(raiz);
+        }   
+    }
 }
 
 /*
@@ -182,6 +236,8 @@ bool avl_inserir(AVL *arvore, ITEM *item) {
     }
 
     _avl_inserir_no(&arvore->raiz, no);
+
+    printf("Feito\n");
 
     return(true);
 }
