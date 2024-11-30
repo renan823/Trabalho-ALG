@@ -14,12 +14,14 @@ int main(void) {
     set_inserir(set, item_criar(2, NULL));
 
     SET *set2 = set_criar(ed);
-    set_inserir(set2, item_criar(7, NULL));
+    set_inserir(set2, item_criar(1, NULL));
     set_inserir(set2, item_criar(5, NULL));
-    set_inserir(set2, item_criar(6, NULL));
+    set_inserir(set2, item_criar(2, NULL));
     set_inserir(set2, item_criar(8, NULL));
 
-    SET *set3 = set_uniao(set, set2);
+    SET *set3 = set_interseccao(set, set2);
+
+    set_remover(set3, 1);
 
     set_imprimir(set3);
 

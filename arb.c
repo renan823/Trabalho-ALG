@@ -275,37 +275,64 @@ void _arb_inserir_no(NO_ARB **raiz, NO_ARB *no) {
 }
 
 /*
+Remove um nó.
+A referencia da raiz e a chave de remoção
+são parâmetros.
+Busca pela chave e remove o nó (se existir).
+Caso 1: Nó é folha, basta remover
+Caso 2: Nó tem só um filho, basta ajustar o outro filho
+e depois remover
+Caso 3: Nó tem ambos os filhos, pega o maior da esquerda
+substitui na raiz, ajusta os filhos e remove.
+Após remoção a árvore é validada e realiza rotações
+e trocas de cor quando necessário.
+Retorna o nó removido ou NULL.
 */
 ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
     if (*raiz == NULL) {
         return(NULL);
     }
 
+    ITEM *valor = NULL;
+
     if (item_get_chave((*raiz)->item) > chave) {
-        _arb_remover_no(&(*raiz)->esq, chave);
+        valor = _arb_remover_no(&(*raiz)->esq, chave);
     }
 
     if (item_get_chave((*raiz)->item) < chave) {
-        _arb_remover_no(&(*raiz)->dir, chave);
+        valor = _arb_remover_no(&(*raiz)->dir, chave);
     }
 
     // Chave encontrada
     if (item_get_chave((*raiz)->item) == chave) {
-        ITEM *valor = (*raiz)->item;
+        valor = (*raiz)->item;
 
         // Caso 1 e 2 - Nó folha ou filho único
         if ((*raiz)->esq == NULL || (*raiz)->dir == NULL) {
+            NO_ARB *temp = NULL;
+
             if ((*raiz)->esq == NULL) {
-                *raiz = (*raiz)->dir;
+                temp = (*raiz)->dir;
             } else {
-                *raiz = (*raiz)->esq;
+                temp = (*raiz)->esq;
             }
+
+            if (_arb_no_preto(*raiz) && _arb_no_vermelho(temp)) {
+                temp->cor = BLACK;
+            }
+            
+            // Remover nó
+            free(*raiz);
+            *raiz = temp;
         } else {
             // Caso 3: Nó tem os dois filhos
             _arb_trocar_maximo_esq(raiz, &(*raiz)->esq);
         }
 
         // Ajustar balanceamento após remover (igual na inserção)
+        if (*raiz == NULL) {
+            return(valor);
+        }
         
         // Filho direito RED
         if (_arb_no_vermelho((*raiz)->dir) && !_arb_no_vermelho((*raiz)->esq)) {
@@ -321,9 +348,9 @@ ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
         if (_arb_no_vermelho((*raiz)->dir) && _arb_no_vermelho((*raiz)->esq)) {
             _arb_inverter_cor(raiz);
         }
-
-        return(valor);
     }
+
+    return(valor);
 }
 
 /*
@@ -333,14 +360,37 @@ copiada são parâmetros.
 Primeiro insere o item na raiz, depois esq e dir.
 Nada é retornado.
 */
-void _arb_copiar_no(ARB **copia, NO_ARB *raiz) {
+void _arb_copiar(ARB **copia, NO_ARB *raiz) {
     if (*copia == NULL || raiz == NULL) {
         return;
     }
 
     _arb_inserir_no(&(*copia)->raiz, _arb_criar_no(raiz->item));
-    _arb_copiar_no(copia, raiz->esq);
-    _arb_copiar_no(copia, raiz->dir);
+    _arb_copiar(copia, raiz->esq);
+    _arb_copiar(copia, raiz->dir);
+}
+
+/*
+Copia os nós que estão em ambas árvores para a nova.
+A nova árvore e as raizes das arvores a
+serem copiadas são parâmetros.
+Verifica se o elemento de a1 esta em a2 e
+adiciona na nova arvore se estiver.
+Para buscar pela chave, usa a função de busca binária
+Nada é retornado.
+*/
+void _arb_combinar(ARB **copia, NO_ARB *a1, NO_ARB *a2) {
+    if (*copia == NULL || a1 == NULL || a2 == NULL) {
+        return;
+    }
+
+    // Verifica se esta em ambas
+    if (_arb_busca_binaria(a2, item_get_chave(a1->item)) != NULL) {
+        _arb_inserir_no(&(*copia)->raiz, _arb_criar_no(a1->item));
+    }
+
+    _arb_combinar(copia, a1->esq, a2);
+    _arb_combinar(copia, a1->dir, a2);
 }
 
 // Interface ----------------------------------
@@ -426,7 +476,7 @@ ITEM *arb_buscar(ARB *arvore, int chave) {
 Remove um item pela chave especificada.
 A árvore alvo e a chave do item são parâmetros.
 Usa uma função auxiliar para buscar e remover;
-O retorno é o item ou nulo.
+Retorna o item removido ou nulo
 */
 ITEM *arb_remover(ARB *arvore, int chave) {
     if (arvore == NULL) {
@@ -437,6 +487,10 @@ ITEM *arb_remover(ARB *arvore, int chave) {
 }
 
 /*
+Junta duas árvores.
+As duas árvores são parâmetros.
+Usa uma função auxiliar para realizar a união.
+A nova árvore criada é retornada.
 */
 ARB *arb_unir(ARB *a1, ARB *a2) {
     if (a1 == NULL || a2 == NULL) {
@@ -444,13 +498,18 @@ ARB *arb_unir(ARB *a1, ARB *a2) {
     }
 
     ARB *arvore = arb_criar();
-    _arb_copiar_no(&arvore, a1->raiz);
-    _arb_copiar_no(&arvore, a2->raiz);
+    _arb_copiar(&arvore, a1->raiz);
+    _arb_copiar(&arvore, a2->raiz);
 
     return(arvore);
 }
 
 /*
+Cria uma árvore cujos items estão 
+nas duas árvores indicadas.
+As duas árvores são parâmetros.
+Usa uma função auxiliar para combinar.
+A nova árvore é retornada.
 */
 ARB *arb_intersectar(ARB *a1, ARB *a2) {
     if (a1 == NULL || a2 == NULL) {
@@ -458,6 +517,7 @@ ARB *arb_intersectar(ARB *a1, ARB *a2) {
     }
 
     ARB *arvore = arb_criar();
+    _arb_combinar(&arvore, a1->raiz, a2->raiz);
 
     return(arvore);
 }
