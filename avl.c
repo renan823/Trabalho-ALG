@@ -117,6 +117,8 @@ void _avl_apagar_no(NO_AVL *raiz) {
     free(raiz);
 }
 
+/*
+*/
 void _avl_inserir_no(NO_AVL **raiz, NO_AVL *no) {
     // Caso 1 - Raiz nula
     if (*raiz == NULL) {
@@ -142,10 +144,10 @@ void _avl_inserir_no(NO_AVL **raiz, NO_AVL *no) {
     // Inseriu na direita
     if ((*raiz)->fator == -2) {
         if ((*raiz)->dir->fator <= 0) {
-            // Sinais iguais - Rot. Simples. Esq
+            // Sinais iguais - Rot. Simples Esq
             _avl_rotacionar_esq(raiz);
         } else {
-            // Sinais diferentes - Rot. Dupla. Dir/Esq
+            // Sinais diferentes - Rot. Dupla Dir/Esq
             _avl_rotacionar_dir(&(*raiz)->dir);
             _avl_rotacionar_esq(raiz);
         }   
@@ -154,10 +156,10 @@ void _avl_inserir_no(NO_AVL **raiz, NO_AVL *no) {
     // Inseriu na esquerda
     if ((*raiz)->fator == 2) {
         if ((*raiz)->esq->fator >= 0) {
-            // Sinais iguais - Rot. Simples. Dir
+            // Sinais iguais - Rot. Simples Dir
             _avl_rotacionar_dir(raiz);
         } else {
-            // Sinais diferentes - Rot. Dupla. Esq/Dir
+            // Sinais diferentes - Rot. Dupla Esq/Dir
             _avl_rotacionar_esq(&(*raiz)->esq);
             _avl_rotacionar_dir(raiz);
         }   

@@ -14,5 +14,7 @@
     ITEM *arb_remover(ARB *arvore, int chave);
     ITEM *arb_buscar(ARB *arvore, int chave);
 
+    ARB *arb_unir(ARB *a1, ARB *a2);
+
     void arb_imprimir(ARB *arvore);
 #endif 

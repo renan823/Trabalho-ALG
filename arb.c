@@ -106,6 +106,13 @@ ITEM *_arb_busca_binaria(NO_ARB *no, int chave) {
     return(no->item);
 }
 
+/*
+Rotaciona uma sub-árvore para a esquerda.
+Recebe a referência da raiz como parâmetro.
+Os ponteiros são ajustados.
+Os nós são repintados.
+Nada é retornado.
+*/
 void _arb_rotacionar_esq(NO_ARB **no) {
     NO_ARB *filho = (*no)->dir;
     NO_ARB *pai = *no;
@@ -124,6 +131,13 @@ void _arb_rotacionar_esq(NO_ARB **no) {
     *no = filho;
 }
 
+/*
+Rotaciona uma sub-árvore para a direita.
+Recebe a referência da raiz como parâmetro.
+Os ponteiros são ajustados.
+Os nós são repintados.
+Nada é retornado.
+*/
 void _arb_rotacionar_dir(NO_ARB **no) {
     NO_ARB *filho = (*no)->esq;
     NO_ARB *pai = *no;
@@ -140,6 +154,33 @@ void _arb_rotacionar_dir(NO_ARB **no) {
 
     // Substitui raiz
     *no = filho;
+}
+
+/*
+Encontra o maior nó esquerdo e troca com a raiz.
+A raiz e o filho inicial são parâmetros.
+Na chamada da função, o filho deve ser o esquerdo.
+Ao encontrar o maior filho (sem filho direito), 
+troque seu valor com a raiz.
+O ajuste de sub-aŕvore esquerda (se existir) é feito.
+O Nó é liberado.
+Nada é retornado.
+*/
+void _arb_trocar_maximo_esq(NO_ARB **raiz, NO_ARB **filho) {
+    // Acha o maior filho direito
+    if ((*filho)->dir != NULL) {
+        _arb_maximo_esq(raiz, (*filho)->dir);
+    }
+
+    // Troca o maior filho com a raiz
+    (*raiz)->item = (*filho)->item;
+
+    //Ajustar possiveis filhos e remover
+    NO_ARB *temp = *filho;
+
+    *filho = (*filho)->esq;
+
+    free(temp);
 }
 
 /*
@@ -189,6 +230,17 @@ bool _arb_no_preto(NO_ARB *no) {
 }
 
 /*
+Insere um nó.
+A referencia para a raiz e o novo nó
+são passados por parâmetro.
+Caso 1: A raiz é vazia, insira nela.
+Caso 2: Filho direito RED, rotacionar esquerda
+Caso 3: Nós RED seguidos, rotacionar direita
+Caso 4 (ajuste): Se esq e dir são RED, inverter cores e
+propagar a inversão na recursão.
+Quem chama a função tem como abrigação garantir que
+a raiz sempre seja BLACK.
+Nada é retornado.
 */
 void _arb_inserir_no(NO_ARB **raiz, NO_ARB *no) {
     // Caso 1 - raiz vazia
@@ -211,7 +263,7 @@ void _arb_inserir_no(NO_ARB **raiz, NO_ARB *no) {
         _arb_rotacionar_esq(raiz);
     }
 
-    // Caso 3.2 - RED / RED seguidos
+    // Caso 3 - RED / RED seguidos
     if (_arb_no_vermelho((*raiz)->esq) && _arb_no_vermelho((*raiz)->esq->esq)) {
         _arb_rotacionar_dir(raiz);
     }
@@ -219,6 +271,58 @@ void _arb_inserir_no(NO_ARB **raiz, NO_ARB *no) {
     // Repintar nós caso ambos os filhos RED
     if (_arb_no_vermelho((*raiz)->dir) && _arb_no_vermelho((*raiz)->esq)) {
         _arb_inverter_cor(raiz);
+    }
+}
+
+/*
+*/
+ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
+    if (*raiz == NULL) {
+        return(NULL);
+    }
+
+    if (item_get_chave((*raiz)->item) > chave) {
+        _arb_remover_no(&(*raiz)->esq, chave);
+    }
+
+    if (item_get_chave((*raiz)->item) < chave) {
+        _arb_remover_no(&(*raiz)->dir, chave);
+    }
+
+    // Chave encontrada
+    if (item_get_chave((*raiz)->item) == chave) {
+        ITEM *valor = (*raiz)->item;
+
+        // Caso 1 e 2 - Nó folha ou filho único
+        if ((*raiz)->esq == NULL || (*raiz)->dir == NULL) {
+            if ((*raiz)->esq == NULL) {
+                *raiz = (*raiz)->dir;
+            } else {
+                *raiz = (*raiz)->esq;
+            }
+        } else {
+            // Caso 3: Nó tem os dois filhos
+            _arb_trocar_maximo_esq(raiz, &(*raiz)->esq);
+        }
+
+        // Ajustar balanceamento após remover (igual na inserção)
+        
+        // Filho direito RED
+        if (_arb_no_vermelho((*raiz)->dir) && !_arb_no_vermelho((*raiz)->esq)) {
+            _arb_rotacionar_esq(raiz);
+        }
+
+        // RED / RED seguidos
+        if (_arb_no_vermelho((*raiz)->esq) && _arb_no_vermelho((*raiz)->esq->esq)) {
+            _arb_rotacionar_dir(raiz);
+        }
+
+        // Repintar nós caso ambos os filhos RED
+        if (_arb_no_vermelho((*raiz)->dir) && _arb_no_vermelho((*raiz)->esq)) {
+            _arb_inverter_cor(raiz);
+        }
+
+        return(item);
     }
 }
 
@@ -261,6 +365,13 @@ void arb_apagar(ARB **arvore) {
 }
 
 /*
+Insere um nó na árvore.
+A árvore desejada e o item são parâmetros.
+Usa uma função auxiliar para inserir.
+Após a inserção, garante que raiz seja BLACK.
+Retorna falso se a árvore = NULL ou se não
+foi possível criar (alocar) um novo nó.
+Retorn true caso contrário.
 */
 bool arb_inserir(ARB *arvore, ITEM *item) {
     if (arvore == NULL) {
@@ -297,7 +408,7 @@ ITEM *arb_buscar(ARB *arvore, int chave) {
 /*
 Remove um item pela chave especificada.
 A árvore alvo e a chave do item são parâmetros.
-USa uma função auxiliar para buscar e remover;
+Usa uma função auxiliar para buscar e remover;
 O retorno é o item ou nulo.
 */
 ITEM *arb_remover(ARB *arvore, int chave) {
@@ -305,7 +416,7 @@ ITEM *arb_remover(ARB *arvore, int chave) {
         return(NULL);
     }
 
-    return(NULL);
+    return(_arb_remover_no(&arvore->raiz, int chave));
 }
 
 /*
