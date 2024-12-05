@@ -1,8 +1,5 @@
 all: item.o arb.o avl.o set.o main.o
-	gcc -std=c99 -Wall item.o arb.o avl.o set.o main.o -o sets
-
-item.o:
-	gcc -c item.c 
+	gcc -std=c99 -Wall arb.o avl.o set.o main.o -o sets
 
 arb.o:
 	gcc -c arb.c 
@@ -20,4 +17,4 @@ run:
 	./sets
 
 clear:
-	rm *.o sets
+	del *.o sets

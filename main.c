@@ -1,4 +1,3 @@
-#include "item.h"
 #include "set.h"
 #include <stdio.h>
 
@@ -8,16 +7,16 @@ int main(void) {
 
     SET *set = set_criar(ed);
 
-    set_inserir(set, item_criar(1, NULL));
-    set_inserir(set, item_criar(3, NULL));
-    set_inserir(set, item_criar(4, NULL));
-    set_inserir(set, item_criar(2, NULL));
+    set_inserir(set, 1);
+    set_inserir(set, 3);
+    set_inserir(set, 4);
+    set_inserir(set, 2);
 
     SET *set2 = set_criar(ed);
-    set_inserir(set2, item_criar(1, NULL));
-    set_inserir(set2, item_criar(5, NULL));
-    set_inserir(set2, item_criar(2, NULL));
-    set_inserir(set2, item_criar(8, NULL));
+    set_inserir(set2, 1);
+    set_inserir(set2, 5);
+    set_inserir(set2, 2);
+    set_inserir(set2, 8);
 
     SET *set3 = set_interseccao(set, set2);
 
