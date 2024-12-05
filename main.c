@@ -2,21 +2,23 @@
 #include <stdio.h>
 
 int main(void) {
-    int ed; // 0 para avl, 1 para rubro-negro
+    int ed, tam_set, tam_set2, chave; // 0 para avl, 1 para rubro-negro
     scanf("%d", &ed);
 
     SET *set = set_criar(ed);
-
-    set_inserir(set, 1);
-    set_inserir(set, 3);
-    set_inserir(set, 4);
-    set_inserir(set, 2);
-
     SET *set2 = set_criar(ed);
-    set_inserir(set2, 1);
-    set_inserir(set2, 5);
-    set_inserir(set2, 2);
-    set_inserir(set2, 8);
+
+    scanf("%d %d", &tam_set, &tam_set2);
+
+    for(int i = 0; i < tam_set; i++){
+        scanf("%d", &chave);
+        set_inserir(set, chave);
+    }
+
+    for(int i = 0; i < tam_set2; i++){
+        scanf("%d", &chave);
+        set_inserir(set2, chave);
+    }
 
     SET *set3 = set_interseccao(set, set2);
 
