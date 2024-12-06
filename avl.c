@@ -1,4 +1,6 @@
+#include "item.h"
 #include "avl.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -7,7 +9,7 @@
 typedef struct no NO_AVL;
 
 struct no {
-    int chave;
+    ITEM *item;
     NO_AVL *esq;
     NO_AVL *dir;
     int fator;
@@ -27,11 +29,11 @@ Os valores são inicializados se no != NULL.
 Um nó sempre começa sem filhos e com fator = 0;
 O ponteiro do nó é retornado.
 */
-NO_AVL *_avl_criar_no(int chave) {
+NO_AVL *_avl_criar_no(ITEM *item) {
     NO_AVL *no = (NO_AVL*) malloc(sizeof(NO_AVL));
 
     if (no != NULL) {
-        no->chave = chave;
+        no->item = item;
         no->esq = NULL;
         no->dir = NULL;
         no->fator = 0;
@@ -54,6 +56,8 @@ void _avl_apagar_no(NO_AVL *raiz) {
 
     _avl_apagar_no(raiz->esq);
     _avl_apagar_no(raiz->dir);
+
+    item_apagar(&raiz->item);
 
     free(raiz);
 }
@@ -127,20 +131,20 @@ A busca binária percorre caminhos até achar o valor.
 Se o item é achado, ele será retornado.
 Caso contrário, nulo é retornado.
 */
-int _avl_busca_binaria(NO_AVL *no, int chave) {
+ITEM *_avl_busca_binaria(NO_AVL *no, int chave) {
     if (no == NULL) {
-        return 0;
+        return(NULL);
     }
 
-    if (no->chave > chave) {
+    if (item_get_chave(no->item) > chave) {
         return(_avl_busca_binaria(no->esq, chave));
     }
 
-    if (no->chave < chave) {
+    if (item_get_chave(no->item) < chave) {
         return(_avl_busca_binaria(no->dir, chave));
     }
 
-    return(no->chave);
+    return(no->item);
 }
 
 /*
@@ -160,7 +164,7 @@ void _avl_trocar_maximo_esq(NO_AVL **raiz, NO_AVL **filho) {
     }
 
     // Troca o maior filho com a raiz
-    (*raiz)->chave = (*filho)->chave;
+    (*raiz)->item = (*filho)->item;
 
     //Ajustar possiveis filhos e remover
     NO_AVL *temp = *filho;
@@ -185,15 +189,15 @@ void _avl_inserir_no(NO_AVL **raiz, NO_AVL *no) {
         return;
     }
 
-    if ((*raiz)->chave > no->chave) {
+    if (item_get_chave((*raiz)->item) > item_get_chave(no->item)) {
         _avl_inserir_no(&(*raiz)->esq, no);
     }
 
-    if ((*raiz)->chave < no->chave) {
+    if (item_get_chave((*raiz)->item) < item_get_chave(no->item)) {
         _avl_inserir_no(&(*raiz)->dir, no);
     }
 
-    if ((*raiz)->chave == no->chave) {
+    if (item_get_chave((*raiz)->item) == item_get_chave(no->item)) {
         return;
     }
 
@@ -238,23 +242,23 @@ substitui na raiz, ajusta os filhos e remove.
 Após remoção, os fatores são calculados novamente.
 Retorna o nó removido ou NULL.
 */
-int _avl_remover_no(NO_AVL **raiz, int chave) {
+ITEM *_avl_remover_no(NO_AVL **raiz, int chave) {
     if (*raiz == NULL) {
-        return 0;
+        return(NULL);
     }
 
-    int valor;
+    ITEM *valor = NULL;
 
-    if ((*raiz)->chave > chave) {
+    if (item_get_chave((*raiz)->item) > chave) {
         valor = _avl_remover_no(&(*raiz)->esq, chave);
     }
 
-    if ((*raiz)->chave < chave) {
+    if (item_get_chave((*raiz)->item) < chave) {
         valor = _avl_remover_no(&(*raiz)->dir, chave);
     }
 
-    if ((*raiz)->chave == chave) {
-        valor = (*raiz)->chave;
+    if (item_get_chave((*raiz)->item) == chave) {
+        valor = (*raiz)->item;
 
         // Caso 1 e 2 - Nó folha ou filho único
         if ((*raiz)->esq == NULL || (*raiz)->dir == NULL) {
@@ -320,7 +324,7 @@ void _avl_imprimir_em_ordem(NO_AVL *raiz) {
     }
 
     _avl_imprimir_em_ordem(raiz->esq);
-    printf("%d\n", raiz->chave);
+    printf("%d\n", item_get_chave(raiz->item));
     _avl_imprimir_em_ordem(raiz->dir);
 }
 
@@ -336,7 +340,7 @@ void _avl_copiar(AVL **copia, NO_AVL *raiz) {
         return;
     }
 
-    _avl_inserir_no(&(*copia)->raiz, _avl_criar_no(raiz->chave));
+    _avl_inserir_no(&(*copia)->raiz, _avl_criar_no(raiz->item));
     _avl_copiar(copia, raiz->esq);
     _avl_copiar(copia, raiz->dir);
 }
@@ -356,8 +360,8 @@ void _avl_combinar(AVL **copia, NO_AVL *a1, NO_AVL *a2) {
     }
 
     // Verifica se esta em ambas
-    if (_avl_busca_binaria(a2, a1->chave) != 0) {
-        _avl_inserir_no(&(*copia)->raiz, _avl_criar_no(a1->chave));
+    if (_avl_busca_binaria(a2, item_get_chave(a1->item)) != NULL) {
+        _avl_inserir_no(&(*copia)->raiz, _avl_criar_no(a1->item));
     }
 
     _avl_combinar(copia, a1->esq, a2);
@@ -409,12 +413,12 @@ Cria um novo nó e coloca-o em sua posição.
 Usa uma função auxiliar para fazer a inserção
 O retorno é verdadeiro ou falso para a inserção.
 */
-bool avl_inserir(AVL *arvore, int chave) {
+bool avl_inserir(AVL *arvore, ITEM *item) {
     if (arvore == NULL) {
         return(false);
     }
 
-    NO_AVL *no = _avl_criar_no(chave);
+    NO_AVL *no = _avl_criar_no(item);
     if (no == NULL) {
         return(false);
     }
@@ -430,9 +434,9 @@ A arvore alvo e a chave de remoção são parâmetros.
 Usa uma função auxiliar para buscar e remover.
 Retorna o item removido ou NULL
 */
-int avl_remover(AVL *arvore, int chave) {
+ITEM *avl_remover(AVL *arvore, int chave) {
     if (arvore == NULL) {
-        return 0;
+        return(NULL);
     }
 
     return(_avl_remover_no(&arvore->raiz, chave));
@@ -444,9 +448,9 @@ A arvore alvo e a chave de busca são parâmetros.
 Usa uma função de busca binaria auxiliar.
 Retorna o item encontrado ou nulo.
 */
-int avl_buscar(AVL *arvore, int chave) {
+ITEM *avl_buscar(AVL *arvore, int chave) {
     if (arvore == NULL) {
-        return 0;
+        return(NULL);
     }
 
     return(_avl_busca_binaria(arvore->raiz, chave));

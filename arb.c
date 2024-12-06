@@ -1,3 +1,4 @@
+#include "item.h"
 #include "arb.h"
 
 #include <stdio.h>
@@ -12,7 +13,7 @@
 typedef struct no NO_ARB;
 
 struct no {
-    int chave;
+    ITEM *item;
     NO_ARB *esq;
     NO_ARB *dir;
     char cor;
@@ -33,11 +34,11 @@ Todo nó começa sem filhos.
 Todo nó inicia vermelho!
 O nó é retornado.
 */
-NO_ARB *_arb_criar_no(int chave) {
+NO_ARB *_arb_criar_no(ITEM *item) {
     NO_ARB *no = (NO_ARB*) malloc(sizeof(NO_ARB));
 
     if (no != NULL) {
-        no->chave = chave;
+        no->item = item;
         no->esq = NULL;
         no->dir = NULL;
         no->cor = RED;
@@ -61,6 +62,7 @@ void _arb_apagar_no(NO_ARB *no) {
     _arb_apagar_no(no->esq);
     _arb_apagar_no(no->dir);
 
+    item_apagar(&no->item);
     free(no);
 }
 
@@ -77,7 +79,7 @@ void _arb_percurso_ordem(NO_ARB *no) {
     }
 
     _arb_percurso_ordem(no->esq);
-    printf("%d - %c\n", no->chave, no->cor);
+    printf("%d - %c\n", item_get_chave(no->item), no->cor);
     _arb_percurso_ordem(no->dir); 
 }
 
@@ -88,20 +90,20 @@ A busca binária percorre caminhos até achar o valor.
 Se o item é achado, ele será retornado.
 Caso contrário, nulo é retornado.
 */
-int _arb_busca_binaria(NO_ARB *no, int chave) {
+ITEM *_arb_busca_binaria(NO_ARB *no, int chave) {
     if (no == NULL) {
-        return 0;
+        return(NULL);
     }
 
-    if (no->chave > chave) {
+    if (item_get_chave(no->item) > chave) {
         return(_arb_busca_binaria(no->esq, chave));
     }
 
-    if (no->chave < chave) {
+    if (item_get_chave(no->item) < chave) {
         return(_arb_busca_binaria(no->dir, chave));
     }
 
-    return(no->chave);
+    return(no->item);
 }
 
 /*
@@ -171,7 +173,7 @@ void _arb_trocar_maximo_esq(NO_ARB **raiz, NO_ARB **filho) {
     }
 
     // Troca o maior filho com a raiz
-    (*raiz)->chave = (*filho)->chave;
+    (*raiz)->item = (*filho)->item;
 
     //Ajustar possiveis filhos e remover
     NO_ARB *temp = *filho;
@@ -248,11 +250,11 @@ void _arb_inserir_no(NO_ARB **raiz, NO_ARB *no) {
     }
 
     // Ida recursão
-    if ((*raiz)->chave > no->chave) {
+    if (item_get_chave((*raiz)->item) > item_get_chave(no->item)) {
         _arb_inserir_no(&(*raiz)->esq, no);
     }
 
-    if ((*raiz)->chave < no->chave) {
+    if (item_get_chave((*raiz)->item) < item_get_chave(no->item)) {
         _arb_inserir_no(&(*raiz)->dir, no);
     }
 
@@ -286,24 +288,24 @@ Após remoção a árvore é validada e realiza rotações
 e trocas de cor quando necessário.
 Retorna o nó removido ou NULL.
 */
-int _arb_remover_no(NO_ARB **raiz, int chave) {
+ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
     if (*raiz == NULL) {
         return(NULL);
     }
 
-    int valor;
+    ITEM *valor = NULL;
 
-    if ((*raiz)->chave > chave) {
+    if (item_get_chave((*raiz)->item) > chave) {
         valor = _arb_remover_no(&(*raiz)->esq, chave);
     }
 
-    if ((*raiz)->chave < chave) {
+    if (item_get_chave((*raiz)->item) < chave) {
         valor = _arb_remover_no(&(*raiz)->dir, chave);
     }
 
     // Chave encontrada
-    if ((*raiz)->chave == chave) {
-        valor = (*raiz)->chave;
+    if (item_get_chave((*raiz)->item) == chave) {
+        valor = (*raiz)->item;
 
         // Caso 1 e 2 - Nó folha ou filho único
         if ((*raiz)->esq == NULL || (*raiz)->dir == NULL) {
@@ -363,7 +365,7 @@ void _arb_copiar(ARB **copia, NO_ARB *raiz) {
         return;
     }
 
-    _arb_inserir_no(&(*copia)->raiz, _arb_criar_no(raiz->chave));
+    _arb_inserir_no(&(*copia)->raiz, _arb_criar_no(raiz->item));
     _arb_copiar(copia, raiz->esq);
     _arb_copiar(copia, raiz->dir);
 }
@@ -383,8 +385,8 @@ void _arb_combinar(ARB **copia, NO_ARB *a1, NO_ARB *a2) {
     }
 
     // Verifica se esta em ambas
-    if (_arb_busca_binaria(a2, a1->chave) != 0) {
-        _arb_inserir_no(&(*copia)->raiz, a1->chave);
+    if (_arb_busca_binaria(a2, item_get_chave(a1->item)) != NULL) {
+        _arb_inserir_no(&(*copia)->raiz, _arb_criar_no(a1->item));
     }
 
     _arb_combinar(copia, a1->esq, a2);
@@ -438,12 +440,12 @@ Retorna falso se a árvore = NULL ou se não
 foi possível criar (alocar) um novo nó.
 Retorn true caso contrário.
 */
-bool arb_inserir(ARB *arvore, int chave) {
+bool arb_inserir(ARB *arvore, ITEM *item) {
     if (arvore == NULL) {
         return(false);
     }
 
-    NO_ARB *no = _arb_criar_no(chave);
+    NO_ARB *no = _arb_criar_no(item);
     if (no == NULL) {
         return(false);
     }
@@ -462,9 +464,9 @@ A árvore alvo e a chave de busca são parâmetros.
 Usa uma função auxiliar para buscar.
 O retorno é o item ou nulo.
 */
-int arb_buscar(ARB *arvore, int chave) {
+ITEM *arb_buscar(ARB *arvore, int chave) {
     if (arvore == NULL) {
-        return 0;
+        return(NULL);
     }
 
     return(_arb_busca_binaria(arvore->raiz, chave));
@@ -476,7 +478,7 @@ A árvore alvo e a chave do item são parâmetros.
 Usa uma função auxiliar para buscar e remover;
 Retorna o item removido ou nulo
 */
-int arb_remover(ARB *arvore, int chave) {
+ITEM *arb_remover(ARB *arvore, int chave) {
     if (arvore == NULL) {
         return(NULL);
     }

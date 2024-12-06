@@ -1,4 +1,5 @@
 #include "set.h"
+#include "item.h"
 #include "avl.h"
 #include "arb.h"
 
@@ -49,26 +50,26 @@ bool set_pertence(SET *set, int chave) {
     }
 
     if (set->tipo = ED_AVL) {
-        return(avl_buscar((AVL*) set->ed, chave) != 0);
+        return(avl_buscar((AVL*) set->ed, chave) != NULL);
     } else {
-        return(arb_buscar((ARB*) set->ed, chave) != 0);
+        return(arb_buscar((ARB*) set->ed, chave) != NULL);
     }
 
 }
 
-bool set_inserir(SET *set, int chave) {
+bool set_inserir(SET *set, ITEM *item) {
     if (set == NULL) {
         return(false);
     }
 
     if (set->tipo == ED_AVL) {
-        return(avl_inserir((AVL*) set->ed, chave));
+        return(avl_inserir((AVL*) set->ed, item));
     } else {
-        return(arb_inserir((ARB*) set->ed, chave));
+        return(arb_inserir((ARB*) set->ed, item));
     }
 }
 
-int set_remover(SET *set, int chave) {
+ITEM *set_remover(SET *set, int chave) {
     if (set == NULL) {
         return(false);
     }

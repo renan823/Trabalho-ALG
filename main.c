@@ -1,4 +1,5 @@
 #include "set.h"
+#include "item.h"
 #include <stdio.h>
 
 int main(void) {
@@ -12,12 +13,12 @@ int main(void) {
 
     for(int i = 0; i < tam_set; i++){
         scanf("%d", &chave);
-        set_inserir(set, chave);
+        set_inserir(set, item_criar(chave, NULL));
     }
 
     for(int i = 0; i < tam_set2; i++){
         scanf("%d", &chave);
-        set_inserir(set2, chave);
+        set_inserir(set2, item_criar(chave, NULL));
     }
 
     SET *set3 = set_interseccao(set, set2);
