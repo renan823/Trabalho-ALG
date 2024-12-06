@@ -69,16 +69,25 @@ bool set_inserir(SET *set, ITEM *item) {
     }
 }
 
-ITEM *set_remover(SET *set, int chave) {
+bool set_remover(SET *set, int chave) {
     if (set == NULL) {
         return(false);
     }
 
+    ITEM *resultado = NULL;
+
     if (set->tipo == ED_AVL) {
-        return(avl_remover((AVL*) set->ed, chave));
+        resultado = avl_remover((AVL*) set->ed, chave);
     } else {
-        return(arb_remover((ARB*) set->ed, chave));
+        resultado = arb_remover((ARB*) set->ed, chave);
     }
+
+    if (resultado == NULL) {
+        return(false);
+    }
+
+    item_apagar(&resultado);
+    return(true);
 }
 
 SET *set_uniao(SET *a, SET *b) {

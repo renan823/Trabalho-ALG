@@ -1,0 +1,9 @@
+Trabalho de algoritmos
+
+Alunos: Augusto Ildefonso e Renan Trofino
+
+Decisão de projeto:
+...
+
+Funcionamento:
+...
