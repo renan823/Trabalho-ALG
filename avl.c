@@ -324,7 +324,7 @@ void _avl_imprimir_em_ordem(NO_AVL *raiz) {
     }
 
     _avl_imprimir_em_ordem(raiz->esq);
-    printf("%d\n", item_get_chave(raiz->item));
+    printf("%d, ", item_get_chave(raiz->item));
     _avl_imprimir_em_ordem(raiz->dir);
 }
 

@@ -79,7 +79,7 @@ void _arb_percurso_ordem(NO_ARB *no) {
     }
 
     _arb_percurso_ordem(no->esq);
-    printf("%d\n", item_get_chave(no->item));
+    printf("%d, ", item_get_chave(no->item));
     _arb_percurso_ordem(no->dir); 
 }
 
