@@ -3,7 +3,28 @@ Trabalho de algoritmos
 Alunos: Augusto Ildefonso e Renan Trofino
 
 Decisão de projeto:
-...
+Para criar o TAD set usando as árvore AVL e rubro-negra,
+levamos em conta que árvores são conjuntos, e, logicamente
+poderiam se encaixar muito bem em um TAD conjunto.
+
+A eficiência também foi um fator muito importante na decisão.
+Árvores, em geral, possuem complexidade O(log n) para a maioria
+das operações, o que as torna uma opção quase certeira para o problema.
+A operação de busca é muito vantajosa em árvores, já que a organização
+em nós permite busca binária sem a necessidade de vetor sequencial.
+Desse modo, unimos a vantagem do encadeamento com a busca binária.
+
+
 
 Funcionamento:
-...
+O programa recebe como entrada obrigatória:
+- inteiro (0 ou 1) para definir a ED usada
+- número de items (N) no set 1 e número de items (M) no set 2
+- N items do set 1
+- M items do set 2
+- código da operação
+
+As outras entradas podem variar para cada operação.
+Exemplo busca:
+- set para a busca (1 ou 2)
+- chave de busca
