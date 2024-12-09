@@ -28,3 +28,58 @@ As outras entradas podem variar para cada operação.
 Exemplo busca:
 - set para a busca (1 ou 2)
 - chave de busca
+
+---------------------------------------------------------------------------
+Análise de complexidade
+
+Primeiro vamos analisar a complexidade das funções da AVL:
+- _avl_criar_no: analisando a função vemos que todas as operações tem
+  tempo constante (afinal não há nenhuma espécie de loop, por exemplo). Assim,
+  Temos que a complexidade de tempo é O(6) (há 6 operações no total), mas
+  podemos simplificar para O(1).
+- _avl_apagar_no: como essa função visita, recursivamente, o nó e seus filhos, apagando-os,
+  se tivermos uma árvore que tem n nós e passarmos ela nessa função, ela terá que visitar os n nós.
+  Disso, obtemos a complexidade de tempo que é O(n + 3) (devido a operação de comparação,
+  item_apagar e free), mas podemos simplificar, obtendo O(n).
+- _avl_altura_no: como ela percorre todos os nós, somando 1 à eles, temos que ela irá percorrer n nós, assim
+  sua complexidade é O(n).
+- _avl_rotacionar_dir: a maioria das operações são constantes, com exceção da normalização dos
+  fatores, pois ele chamam a função _avl_altura_no que tem complexidade O(n). Assim,
+  temos O(4 * n + 4), mas simplificando temos O(n).
+- _avl_rotacionar_esq: pelo mesmo motivo da função acima, afinal ambas tem a mesma estrutura,
+  só muda os argumentos da função, a complexidade dela é O(n).
+- _avl_busca_binaria: ele tem três operações de tempo constante (as comparações) e
+  tem duas chamadas recursivas. Analisando a recursão, percebe-se que a cada chamada
+  o valor diminuir praticamente na metade, visto que ele se restringe à uma chamada por vez e
+  e o argumento passado representa quase metade da árvore. Sendo assim, teriamos uma complexidade de
+  O(2 * log(n) + 3) que simplificando fica O(log n).
+- _avl_troca_maximo_esq: novamente, por ele tem uma chamada recursiva, mas passar somente metade da árvore nela
+  ele tem complexidade de O(log n) para essa chamada. Considerando as outras operações, obtemos que a complexidade da função
+  é O(log n + 5), simplificando ela teremos O(log n).
+- _avl_inserir_no: considerando somente as operações temos 10 operações, ou seja, O(10). Agora analisando as recursões,
+  primeiramente temos a recursão para achar a posição do nó folha, que (considerando que os if's são exclusivos, ou seja,
+  somente um dos três if's será verdade) é O(log n), visto que ele passa metade da árvore na chamada recursiva. Agora analisando
+  a normalização, igual foi explicado antes, elta tem complexidade O(log n). Já as chamadas de rotação também possuem complexidade
+  O(log n). Assim a complexidade total é de O(3 * log(n) + 10) que simplificando resulta em O(log n).
+- _avl_remover_no: semelhante ao inserir nó, essa função possui três if's exclusivos e a chamada da recursão também tem custo O(log n)
+  por ele passar metade da árvore, aproximadamente. Como as outras operações são ou constantes ou tem impacto menor que essa, podemos já
+  simplificar a complexidade e obter O(log n).
+- _avl_imprimir_em_ordem: como vamos ter que percorrer todos os n nós, temos que a complexidade da função é O(n).
+- _avl_copiar: como para copiar a AVL é preciso percorrer cada um dos nós, temos que a complexidade será O(n).
+- _avl_combinar: para combinar precisamos verificar cada nó, ou seja, vamos percorrer n nós e também realizar uma busca binária a partir dele.
+  Desse modo, a complexidade obtida é O(n * log n) no pior caso, vale mencionar que no melhor caso a complexidade é O(log n).
+- avl_criar: como todas as operações tem custo constante, temos que a complexidade, já simplificada é O(1).
+- avl_apagar: como para apagar a AVL temos que apagar todos os nós, isso significa que iremos percorrer n nós. Desse modo,
+  a complexidade é O(n).
+- avl_inserir: além das operações de custo constante, temos uma chamada à função _avl_inserir_no, que tem complexidade O(log n). Sendo assim,
+  temos que O(log n + 3), que simplificando resulta em O(log n).
+- avl_remover: além da chamada à função _avl_remover_no que tem complexidade O(log n), temos operações constantes. Assim,
+  a complexidade é O(log n + 1), que simplificando dá O(log n).
+- avl_buscar: como a busca feita na AVL é uma busca binária, temos que a complexidade dessa operação é O(log n).
+- avl_unir: para unir usamos duas vezes a função _avl_copiar que tem complexidade O(n) onde n é o número de nós. Como temos duas
+  árvores e duas chamadas à função, temos que, dado que n e m são o número de nós da árvore 1 e 2 respectivamente, a complexidade
+  é O(n + m).
+- avl_intersectar: como chamamos a função _avl_combinar e todas as outras operações tem custo constante, podemos já expressar a complexidade
+  de forma simplificada, removendo as constantes, obtendo O(n * log n) no pior caso.
+- avl_imprimir: como ele só faz uma chamada à função de imprimir e todas as outras operações são constantes, podemos já desprezá-las e expressar
+  a complexidade de modo que ela é O(n), já que temos que visitar todos os nós.
