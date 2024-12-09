@@ -230,6 +230,47 @@ bool _arb_no_preto(NO_ARB *no) {
 }
 
 /*
+    Propaga RED para a esquerda.
+    Recebe a referência do nó por parâmetro.
+    Caso esqeurda desbalanceada, faz correção.
+*/
+void _arb_propagar_esq(NO_ARB **raiz) {
+    if (*raiz == NULL) return;
+
+    if (!_arb_no_vermelho((*raiz)->esq) && ((*raiz)->esq == NULL || !_arb_no_vermelho((*raiz)->esq->esq))) {
+        _arb_inverter_cor(raiz);
+
+        if ((*raiz)->dir != NULL && _arb_no_vermelho((*raiz)->dir->esq)) {
+            _arb_rotacionar_dir(&(*raiz)->dir);
+            _arb_rotacionar_esq(raiz);
+            _arb_inverter_cor(raiz);
+        }
+    }
+}
+
+/*
+    Propaga RED para a direita.
+    Recebe a referência do nó por parâmetro.
+    Caso direita desbalanceada, faz correção.
+*/
+void _arb_propagar_dir(NO_ARB **raiz) {
+    if (*raiz == NULL) return;
+
+    if (_arb_no_vermelho((*raiz)->esq)) {
+        _arb_rotacionar_dir(raiz);
+    }
+
+    if (!_arb_no_vermelho((*raiz)->dir) && ((*raiz)->dir == NULL || !_arb_no_vermelho((*raiz)->dir->esq))) {
+        _arb_inverter_cor(raiz);
+
+        if ((*raiz)->esq != NULL && _arb_no_vermelho((*raiz)->esq->esq)) {
+            _arb_rotacionar_dir(raiz);
+            _arb_inverter_cor(raiz);
+        }
+    }
+}
+
+/*
 Insere um nó.
 A referencia para a raiz e o novo nó
 são passados por parâmetro.
@@ -296,10 +337,12 @@ ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
     ITEM *valor = NULL;
 
     if (item_get_chave((*raiz)->item) > chave) {
+        _arb_propagar_esq(raiz);
         valor = _arb_remover_no(&(*raiz)->esq, chave);
     }
 
     if (item_get_chave((*raiz)->item) < chave) {
+        _arb_propagar_esq(raiz);
         valor = _arb_remover_no(&(*raiz)->dir, chave);
     }
 
@@ -317,6 +360,7 @@ ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
                 temp = (*raiz)->esq;
             }
 
+            // Caso do caminho negro
             if (_arb_no_preto(*raiz) && _arb_no_vermelho(temp)) {
                 temp->cor = BLACK;
             }
@@ -326,6 +370,7 @@ ITEM *_arb_remover_no(NO_ARB **raiz, int chave) {
             *raiz = temp;
         } else {
             // Caso 3: Nó tem os dois filhos
+            _arb_propagar_esq(raiz); // Ajuste do caminho negro
             _arb_trocar_maximo_esq(raiz, &(*raiz)->esq);
         }
 
