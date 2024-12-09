@@ -191,7 +191,7 @@ Os filhos se tornam pretos.
 Nada é retornado.
 */
 void _arb_inverter_cor(NO_ARB **no) {
-    if (*no == NULL) {
+    if (*no == NULL || (*no)->esq == NULL || (*no)->dir == NULL) {
         return;
     }
 
