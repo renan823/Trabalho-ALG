@@ -83,3 +83,64 @@ Primeiro vamos analisar a complexidade das funções da AVL:
   de forma simplificada, removendo as constantes, obtendo O(n * log n) no pior caso.
 - avl_imprimir: como ele só faz uma chamada à função de imprimir e todas as outras operações são constantes, podemos já desprezá-las e expressar
   a complexidade de modo que ela é O(n), já que temos que visitar todos os nós.
+
+Agora, vamos analisar a complexidade das funções da rubro-negra:
+- _arb_criar_no: como ele apenas inicializa valores e aloca memória, temos somente operações constantes. Desse modo a complexidade
+  é O(1).
+- _arb_apagar_no: como ele vai percorrer todos os nós, temos que ele irá percorrer n nós. Assim, considerano suas operações constantes temos
+  O(n + 3), que simplificando fica O(n).
+- _arb_percurso_ordem: como nesse caso também vamos visitar todos os nós, iremos percorrer n nós. Isso acrescido das operações constantes
+  resulta em O(n + 2), que simplificando fica O(n).
+- _arb_busca_binária: como ele segue um algoritmo de busca binária, sabemos que sua complexidade é de O(log n). Isso acrescido das operações constantes,
+  resulta em O(log n + 3) que simplificando fica O(log n).
+- _arb_rotacionar_esq: como não há nenhuma chamada recursiva e tem somente operações constantes temos O(7) que pode ser simplificado para
+  O(1).
+- _arb_rotacionar_dir: como não há nenhuma chamada recursiva e tem somente operações constantes temos
+  O(7) que pode ser simplificado para O(1).
+- arb_trocar_maximo_esq: considerando as operações constantes temos O(5) e a chamada recursiva da função tem complexidade O(log n), visto que
+  ele passa como argumento metade da árvore, por isso o log n. Então temos, juntando ambos, O(log n + 5), que simplificando resulta em O(log n).
+- _arb_inverter_cor: essa função só tem operações constantes, que resultam em O(6), que simplificando dá O(1).
+- _arb_no_vermelho: essa função só tem operações constantes, que resultam em O(2), que simplificando dá O(1).
+- _arb_no_preto: essa função só tem operações constantes, que resultam em O(2), que simplificando dá O(1).
+- _arb_propagar_esq: tanto as funções que são chamadas quanto as operações da função tem complexidade constante. Somando tudo temos O(10) que simplificando fica O(1).
+- _arb_propagar_dir: tanto as funções que são chamadas quanto as operações da função tem complexidade constante. Somando tudo temos O(10) que simplificando fica O(1).
+- _arb_inserir_no: as chamadas recursivas à função tem custo O(n) pois é preciso percorrer todos os nós da árvore. Além disso, as outras funções, assim como as operações tem custo constante. Assim obtemos
+  O(2 * n + 15) que simplificando fica O(n).
+- _arb_remover_no: analisando a função, temos funções e operações com tempo constante e temos a _arb_trocar_maximo_esq que tem complexidade
+  O(log n) e de todos ela é a que tem a maior ordem. Então, já removendo as constante temos O(log n).
+- _arb_copiar: como temos a função _arb_inserir_no que tem complexidade O(n) e as chamadas recursivas vão percorrer todos os nós, a complexidade
+  será O(n).
+- _arb_combinar: como essa função usa a busca binária, temos a complexidade de O(log n). Além disso tem a função inserir no que tem complexidade
+  O(n). Além delas tem funções e operações constantes. Juntando tudo isso temos O(n * log n + 5) que simplificando resulta em O(n * log n).
+- arb_criar: como só temos operações constantes, podemos somá-las para obter a complexidade total que é O(4) que simplificando dá O(1).
+- arb_apagar: temos a função _arb_apagar_no que tem complexidade O(n) e tem operações de tempo constante. Assim, a complexidade é
+  O(n + 3) que simplificando resulta em O(n).
+- arb_inserir: temos a função inserir no que tem complexidade O(n) e a função criar nó que tem complexidade O(1). Então, considerando as operações também,
+  temos a complexidade O(n + 4) que simplificando resulta em O(n).
+- arb_buscar: ele faz uso da função de busca binária que tem complexidade O(log n). Juntando a complexidade dela com a das operações temos O(log n + 1) que simplificando dá O(log n).
+- arb_remover: ele faz uso da função de remover nó, o que implica em uma complexidade O(log n). Juntando essa função com as operações constantes temos O(log n + 1) que
+  simplificando dá O(log n).
+- arb_unir: ele faz uso duas vezes da função _arb_copiar que tem complexidade O(n). Além disso ele tem operações constantes, assim, tomando n e m como a quantidade de nós das árvores, a complexidade dele é O(n + m + 4) que simplificando
+  dá O(n + m).
+- arb_intersectar: ele faz uso da função combinar que tem complexidade O(n * log n). Além disso tem as operações constantes, assim, a complexidade total é O(n * log n + 3) e simplificando
+  fica O(n * log n).
+- arb_imprimir: como para imprimir a árvore temos que visitar todos os nós, ou seja n nós. Assim, a complexidade dessa função é O(n).
+
+Por fim, temos que analisar a complexidade do set:
+- set_criar: a complexidade das constantes dele é O(4) que podemos simplificar para O(1). Agora, ele pode usar tanto a AVL quanto a Rubro-Negra
+  e ambas possuem a mesma complexidade para a criação que é O(1). Assim, juntando as complexidades anteriores vamos ter que a complexidade
+  é O(1).
+- set_apagar: a complexidade das constantes vai ser O(1). Agora, analisando a complexidade das funções da AVL e da Rubro-Negra, vemos que elas tem
+  a mesma complexidade de O(n). Então a complexidade da função é O(n).
+- set_pertence: a complexidade das constantes é O(2), que simplificando fica O(1). Agora, analisando a complexidade da busca da AVL e da Rubro-Negra
+  temos que ambas são O(log n). Então juntando tudo a complexidade é O(log n).
+- set_inserir: a complexidade das operações é O(2) que simplificando é O(1). Agora, analisando as operações de inserir vemos que para a AVL a complexidade da função seria O(log n)
+  e para a Rubro-Negra a complexidade da função é O(n).
+- set_remover: a complexidade das operações é O(5) que simplificando dá O(1). Agora analisando as operações de remover temos que em ambas as árvores
+  a complexidade é O(log n). Então, juntando as complexidades, temos O(log n).
+- set_uniao: considerando as operações, a complexidade delas é O(5) que simplificando é O(1). Agora, analisando a função de uniao de AVL e Rubro-Negra tem a mesma complexidade
+  de O(n * m). Então a complexidade da função como um todo é O(n* m).
+- set_interseccao: considerando as operações, a complexidade delas é O(5) que simplificando é O(1). Agora, analisando a função de uniao de AVL e Rubro-Negra tem a mesma complexidade
+  de O(n * log n). Então a complexidade da função como um todo é O(n * log n).
+- set_imprimir: considerando as operações temos a complexidade de O(2) que simplificando dá O(1). Agora analisando as funções de imprimir da AVL e da Rubro-Negra vemos que eles possuem a mesma
+  complexidade de O(n). Juntando as duas complexidades anteriores e simplificando-a temos O(n).
