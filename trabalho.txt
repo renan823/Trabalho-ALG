@@ -59,11 +59,12 @@ Primeiro vamos analisar a complexidade das funções da AVL:
 - _avl_inserir_no: considerando somente as operações temos 10 operações, ou seja, O(10). Agora analisando as recursões,
   primeiramente temos a recursão para achar a posição do nó folha, que (considerando que os if's são exclusivos, ou seja,
   somente um dos três if's será verdade) é O(log n), visto que ele passa metade da árvore na chamada recursiva. Agora analisando
-  a normalização, igual foi explicado antes, elta tem complexidade O(log n). Já as chamadas de rotação também possuem complexidade
-  O(log n). Assim a complexidade total é de O(3 * log(n) + 10) que simplificando resulta em O(log n).
+  a normalização, igual foi explicado antes, ela tem complexidade O(n) (devido a função da altura). Já as chamadas de rotação também possuem complexidade
+  O(log n). Assim a complexidade total é de O(n + 2 * log(n) + 10) que simplificando resulta em O(n + log n) e como estamos usando Big-Oh,
+  que dá o teto de valores, e temos que n > log n, quando simplificarmos teremos O(n).
 - _avl_remover_no: semelhante ao inserir nó, essa função possui três if's exclusivos e a chamada da recursão também tem custo O(log n)
-  por ele passar metade da árvore, aproximadamente. Como as outras operações são ou constantes ou tem impacto menor que essa, podemos já
-  simplificar a complexidade e obter O(log n).
+  por ele passar metade da árvore, aproximadamente. Temos também a chamada da altura que tem complexidade O(n). Como as outras operações são ou constantes ou
+  tem impacto menor que essa, podemos fazer uma análise semelhante à da inserção e obter a complexidade O(n).
 - _avl_imprimir_em_ordem: como vamos ter que percorrer todos os n nós, temos que a complexidade da função é O(n).
 - _avl_copiar: como para copiar a AVL é preciso percorrer cada um dos nós, temos que a complexidade será O(n).
 - _avl_combinar: para combinar precisamos verificar cada nó, ou seja, vamos percorrer n nós e também realizar uma busca binária a partir dele.
@@ -134,10 +135,10 @@ Por fim, temos que analisar a complexidade do set:
   a mesma complexidade de O(n). Então a complexidade da função é O(n).
 - set_pertence: a complexidade das constantes é O(2), que simplificando fica O(1). Agora, analisando a complexidade da busca da AVL e da Rubro-Negra
   temos que ambas são O(log n). Então juntando tudo a complexidade é O(log n).
-- set_inserir: a complexidade das operações é O(2) que simplificando é O(1). Agora, analisando as operações de inserir vemos que para a AVL a complexidade da função seria O(log n)
+- set_inserir: a complexidade das operações é O(2) que simplificando é O(1). Agora, analisando as operações de inserir vemos que para a AVL a complexidade da função seria O(n)
   e para a Rubro-Negra a complexidade da função é O(n).
-- set_remover: a complexidade das operações é O(5) que simplificando dá O(1). Agora analisando as operações de remover temos que em ambas as árvores
-  a complexidade é O(log n). Então, juntando as complexidades, temos O(log n).
+- set_remover: a complexidade das operações é O(5) que simplificando dá O(1). Agora analisando as operações de remover temos que na AVL é O(n) e na Rubro-Negra é
+  O(log n). Então, juntando as complexidades, temos O(log n) para Rubro-Negra e O(n) para AVL.
 - set_uniao: considerando as operações, a complexidade delas é O(5) que simplificando é O(1). Agora, analisando a função de uniao de AVL e Rubro-Negra tem a mesma complexidade
   de O(n * m). Então a complexidade da função como um todo é O(n* m).
 - set_interseccao: considerando as operações, a complexidade delas é O(5) que simplificando é O(1). Agora, analisando a função de uniao de AVL e Rubro-Negra tem a mesma complexidade
