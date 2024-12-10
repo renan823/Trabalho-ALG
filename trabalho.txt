@@ -72,10 +72,10 @@ Primeiro vamos analisar a complexidade das funções da AVL:
 - avl_criar: como todas as operações tem custo constante, temos que a complexidade, já simplificada é O(1).
 - avl_apagar: como para apagar a AVL temos que apagar todos os nós, isso significa que iremos percorrer n nós. Desse modo,
   a complexidade é O(n).
-- avl_inserir: além das operações de custo constante, temos uma chamada à função _avl_inserir_no, que tem complexidade O(log n). Sendo assim,
-  temos que O(log n + 3), que simplificando resulta em O(log n).
-- avl_remover: além da chamada à função _avl_remover_no que tem complexidade O(log n), temos operações constantes. Assim,
-  a complexidade é O(log n + 1), que simplificando dá O(log n).
+- avl_inserir: além das operações de custo constante, temos uma chamada à função _avl_inserir_no, que tem complexidade O(n). Sendo assim,
+  temos que O(n + 3), que simplificando resulta em O(n).
+- avl_remover: além da chamada à função _avl_remover_no que tem complexidade O(n), temos operações constantes. Assim,
+  a complexidade é O(n + 1), que simplificando dá O(n).
 - avl_buscar: como a busca feita na AVL é uma busca binária, temos que a complexidade dessa operação é O(log n).
 - avl_unir: para unir usamos duas vezes a função _avl_copiar que tem complexidade O(n) onde n é o número de nós. Como temos duas
   árvores e duas chamadas à função, temos que, dado que n e m são o número de nós da árvore 1 e 2 respectivamente, a complexidade
